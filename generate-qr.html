@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cafe Table QR Code Generator & Printable Cards</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  
+  <!-- Fast, lightweight QRCode generator library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #f7f4ee;
+      color: #241b16;
+      padding: 24px 16px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 2rem;
+      color: #241b16;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      color: #6e645e;
+      font-size: 0.95rem;
+    }
+
+    /* Controls Form */
+    .controls-card {
+      background: #ffffff;
+      border: 1px solid #e5dfd5;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+      margin-bottom: 32px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #241b16;
+    }
+
+    .form-input {
+      height: 44px;
+      padding: 0 14px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      border: 1.5px solid #dcd5c9;
+      border-radius: 10px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-input:focus {
+      border-color: #b84a22;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: #b84a22;
+      color: #ffffff;
+      border: none;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 12px 28px;
+      border-radius: 9999px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: #9c3b17;
+    }
+
+    .btn-secondary {
+      background: #ffffff;
+      color: #241b16;
+      border: 1.5px solid #dcd5c9;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 12px 24px;
+      border-radius: 9999px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-secondary:hover {
+      background: #f0ebe2;
+    }
+
+    /* Cards Grid */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 24px;
+    }
+
+    /* Single Printable Table Card */
+    .table-card {
+      background: #ffffff;
+      border: 2px dashed #b84a22;
+      border-radius: 16px;
+      padding: 24px 20px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+      position: relative;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
+    .card-cafe-name {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #241b16;
+      margin-bottom: 2px;
+    }
+
+    .card-tagline {
+      font-size: 0.76rem;
+      color: #8c827a;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .card-table-badge {
+      background: #faebe4;
+      color: #b84a22;
+      border: 1.5px solid #f0cbbd;
+      padding: 6px 18px;
+      border-radius: 9999px;
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+
+    .qr-wrapper {
+      padding: 10px;
+      background: #ffffff;
+      border: 1px solid #e5dfd5;
+      border-radius: 12px;
+      display: inline-block;
+      margin-bottom: 14px;
+    }
+
+    .qr-wrapper img, .qr-wrapper canvas {
+      display: block;
+      margin: 0 auto;
+    }
+
+    .card-scan-text {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #241b16;
+      margin-bottom: 2px;
+    }
+
+    .card-hint {
+      font-size: 0.75rem;
+      color: #6e645e;
+      line-height: 1.3;
+    }
+
+    .card-url {
+      font-size: 0.68rem;
+      color: #a89f97;
+      margin-top: 8px;
+      word-break: break-all;
+    }
+
+    /* Print Styles for A4 Paper */
+    @media print {
+      body {
+        background: #ffffff;
+        padding: 0;
+      }
+
+      .controls-card, .header {
+        display: none !important;
+      }
+
+      .cards-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        width: 100%;
+      }
+
+      .table-card {
+        border: 2px solid #241b16;
+        box-shadow: none;
+        page-break-inside: avoid;
+        break-inside: avoid;
+        padding: 20px 16px;
+        min-height: 340px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <h1 class="title">🖨️ Table QR Code Generator</h1>
+      <p class="subtitle">Generate & Print customized QR code table tents for all your cafe tables in 1-click</p>
+    </div>
+
+    <!-- Controls Panel -->
+    <div class="controls-card">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="baseUrlInput">Your Menu Live Website URL:</label>
+          <input type="text" id="baseUrlInput" class="form-input" placeholder="e.g. https://mycafe.netlify.app" value="https://mycafe.netlify.app">
+        </div>
+
+        <div class="form-group">
+          <label for="cafeNameInput">Cafe Name:</label>
+          <input type="text" id="cafeNameInput" class="form-input" value="Chai & Charcha Cafe">
+        </div>
+
+        <div class="form-group">
+          <label for="tableCountInput">Number of Tables (or comma-separated):</label>
+          <input type="text" id="tableCountInput" class="form-input" value="10" placeholder="e.g. 10 or 1,2,3,4,5">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button type="button" class="btn-primary" onclick="generateAllQRs()">
+          ⚡ Generate Table Cards
+        </button>
+        <button type="button" class="btn-secondary" onclick="window.print()">
+          🖨️ Print All Cards (A4 PDF)
+        </button>
+      </div>
+    </div>
+
+    <!-- Generated QR Cards Grid -->
+    <div id="cardsGrid" class="cards-grid">
+      <!-- Generated via JS -->
+    </div>
+  </div>
+
+  <script>
+    function parseTables(input) {
+      input = input.trim();
+      // If single number, e.g. "10" -> [1, 2, 3 ... 10]
+      if (/^\d+$/.test(input)) {
+        const count = parseInt(input, 10);
+        return Array.from({ length: count }, (_, i) => String(i + 1));
+      }
+      // If comma-separated, e.g. "1, 2, 3, T-4"
+      return input.split(',').map(s => s.trim()).filter(Boolean);
+    }
+
+    function generateAllQRs() {
+      let baseUrl = document.getElementById('baseUrlInput').value.trim();
+      const cafeName = document.getElementById('cafeNameInput').value.trim() || 'Our Cafe';
+      const tableInput = document.getElementById('tableCountInput').value;
+      const grid = document.getElementById('cardsGrid');
+
+      if (!baseUrl) {
+        alert('Please enter your menu website URL');
+        return;
+      }
+
+      // Remove trailing slash if present
+      if (baseUrl.endsWith('/')) {
+        baseUrl = baseUrl.slice(0, -1);
+      }
+
+      grid.innerHTML = '';
+      const tables = parseTables(tableInput);
+
+      tables.forEach((tableNum) => {
+        const fullUrl = `${baseUrl}/?table=${encodeURIComponent(tableNum)}`;
+
+        const card = document.createElement('div');
+        card.className = 'table-card';
+
+        const cafeNameEl = document.createElement('div');
+        cafeNameEl.className = 'card-cafe-name';
+        cafeNameEl.textContent = cafeName;
+
+        const taglineEl = document.createElement('div');
+        taglineEl.className = 'card-tagline';
+        taglineEl.textContent = 'Digital Menu & WhatsApp Order';
+
+        const badgeEl = document.createElement('div');
+        badgeEl.className = 'card-table-badge';
+        badgeEl.textContent = `📍 Table ${tableNum}`;
+
+        const qrWrap = document.createElement('div');
+        qrWrap.className = 'qr-wrapper';
+        qrWrap.id = `qr-table-${tableNum}`;
+
+        const scanText = document.createElement('div');
+        scanText.className = 'card-scan-text';
+        scanText.textContent = 'Scan to Order';
+
+        const hint = document.createElement('div');
+        hint.className = 'card-hint';
+        hint.textContent = 'Open camera • Scan QR • Order on WhatsApp';
+
+        const urlText = document.createElement('div');
+        urlText.className = 'card-url';
+        urlText.textContent = fullUrl;
+
+        card.appendChild(cafeNameEl);
+        card.appendChild(taglineEl);
+        card.appendChild(badgeEl);
+        card.appendChild(qrWrap);
+        card.appendChild(scanText);
+        card.appendChild(hint);
+        card.appendChild(urlText);
+
+        grid.appendChild(card);
+
+        // Generate QR code into qrWrap
+        new QRCode(qrWrap, {
+          text: fullUrl,
+          width: 140,
+          height: 140,
+          colorDark: "#241b16",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.H
+        });
+      });
+    }
+
+    // Auto-generate on load
+    window.addEventListener('DOMContentLoaded', () => {
+      generateAllQRs();
+    });
+  </script>
+</body>
+</html>
